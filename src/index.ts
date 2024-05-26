@@ -1,8 +1,10 @@
 import express from "express";
+import { middleware } from "./Monitoring/middleware";
 
 const app = express();
 
 app.use(express.json());
+app.use(middleware)
 
 app.get("/user", (req, res) => {
     res.send({
