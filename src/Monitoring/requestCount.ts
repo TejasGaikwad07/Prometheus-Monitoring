@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import client from "prom-client";
 
-// Create a counter metric
+
 const requestCounter = new client.Counter({
     name: 'http_requests_total',
     help: 'Total number of HTTP requests',
@@ -15,7 +15,7 @@ export const requestCountMiddleware = (req: Request, res: Response, next: NextFu
         const endTime = Date.now();
         console.log(`Request took ${endTime - startTime}ms`);
 
-        // Increment request counter
+      
         requestCounter.inc({
             method: req.method,
             route: req.route ? req.route.path : req.path,
