@@ -7,12 +7,12 @@ const requestCounter = new client.Counter({
   labelNames: ["method", "route", "status_code"],
 });
 
-export const activeRequestsGauge = new client.Gauge({
+const activeRequestsGauge = new client.Gauge({
     name: 'active_requests',
     help: 'Number of active requests'
 });
 
-export const httpRequestDurationMicroseconds = new client.Histogram({
+const httpRequestDurationMicroseconds = new client.Histogram({
     name: 'http_request_duration_ms',
     help: 'Duration of HTTP requests in ms',
     labelNames: ['method', 'route', 'code'],
