@@ -7,6 +7,28 @@ const requestCounter = new client.Counter({
   labelNames: ["method", "route", "status_code"],
 });
 
+export const activeRequestsGauge = new client.Gauge({
+    name: 'active_requests',
+    help: 'Number of active requests'
+});
+
+export const cleanupMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const startTime = Date.now();
+    activeRequestsGauge.inc();
+
+    res.on('finish', function() {
+        const endTime = Date.now();
+        console.log(`Request took ${endTime - startTime}ms`);
+        
+        requestCounter.inc({
+            method: req.method,
+            route: req.route ? req.route.path : req.path,
+            status_code: res.statusCode
+        });
+        activeRequestsGauge.dec();
+    });
+}
+
 export const requestCountMiddleware = (
   req: Request,
   res: Response,
