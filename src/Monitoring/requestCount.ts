@@ -19,6 +19,28 @@ const httpRequestDurationMicroseconds = new client.Histogram({
     buckets: [0.1, 5, 15, 50, 100, 300, 500, 1000, 3000, 5000] 
 });
 
+export const requestCountMiddleware = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const startTime = Date.now();
+  
+    res.on("finish", () => {
+      const endTime = Date.now();
+      console.log(`Request took ${endTime - startTime}ms`);
+          httpRequestDurationMicroseconds.observe({
+          method: req.method,
+          route: req.route ? req.route.path : req.path,
+          code: res.statusCode
+      }, endTime-startTime);
+    });
+  
+  
+    next();
+  };
+  
+
            // below code will add the request count and gauge to the monitoring
 // export const cleanupMiddleware = (req: Request, res: Response, next: NextFunction) => {
 //     const startTime = Date.now();
@@ -37,23 +59,3 @@ const httpRequestDurationMicroseconds = new client.Histogram({
 //     });
 // }
 
-export const requestCountMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const startTime = Date.now();
-
-  res.on("finish", () => {
-    const endTime = Date.now();
-    console.log(`Request took ${endTime - startTime}ms`);
-        httpRequestDurationMicroseconds.observe({
-        method: req.method,
-        route: req.route ? req.route.path : req.path,
-        code: res.statusCode
-    }, endTime-startTime);
-  });
-
-
-  next();
-};
