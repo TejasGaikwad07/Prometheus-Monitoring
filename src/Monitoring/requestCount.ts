@@ -46,13 +46,13 @@ export const requestCountMiddleware = (
   res.on("finish", () => {
     const endTime = Date.now();
     console.log(`Request took ${endTime - startTime}ms`);
-
-    requestCounter.inc({
-      method: req.method,
-      route: req.route ? req.route.path : req.path,
-      status_code: res.statusCode,
-    });
+        httpRequestDurationMicroseconds.observe({
+        method: req.method,
+        route: req.route ? req.route.path : req.path,
+        code: res.statusCode
+    }, duration);
   });
+
 
   next();
 };
